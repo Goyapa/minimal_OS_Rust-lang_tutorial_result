@@ -109,9 +109,8 @@ Idx Name      Size      VMA               LMA               File off  Algn
   1 .text     0000000b  0000000000100020  0000000000100020  000000a0  2**4
               CONTENTS, ALLOC, LOAD, READONLY, CODE
 ```
-## Creating the ISO
+## Creating the ISO (loading from virual CD-ROM)
 
-Here I differ form original blog post and use an USB-Stick as device insted of an CD-ROM!
 
 
 
