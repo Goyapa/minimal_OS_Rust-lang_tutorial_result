@@ -111,6 +111,37 @@ Idx Name      Size      VMA               LMA               File off  Algn
 ```
 ## Creating the ISO (loading from virual CD-ROM)
 
+All PC BIOSes know how to boot from a CD-ROM, so we want to create a bootable CD-ROM image, containing our kernel and the GRUB bootloader's files, in a single file called an ISO. Make the following directory structure and copy the kernel.bin to the right place:
+
+```
+isofiles
+└── boot
+    ├── grub
+    │   └── grub.cfg
+    └── kernel.bin
+```
+The grub.cfg specifies the file name of our kernel and its Multiboot 2 compliance. It looks like this:
+```
+set timeout=0
+set default=0
+
+menuentry "my os" {
+    multiboot2 /boot/kernel.bin
+    boot
+}
+```
+
+Now we can create a bootable image using the command:
+```
+grub-mkrescue -o os.iso isofiles
+```
+### Booting
+
+Now it's time to boot our OS. We will use QEMU:
+```
+qemu-system-x86_64 -cdrom os.iso
+```
+
 
 
 
