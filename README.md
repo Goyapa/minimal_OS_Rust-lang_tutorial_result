@@ -64,3 +64,56 @@ Through assembling, viewing and disassembling we can see the CPU Opcodes in acti
 0000000A  F4                hlt
 ```
 
+## Building the Executable
+
+To boot our executable later through GRUB, it should be an ELF executable. So we want nasm to create ELF object files instead of plain binaries. To do that, we simply pass the ‑f elf64 argument to it.
+
+To create the ELF executable, we need to link the object files together. We use a custom linker script named linker.ld:
+
+```
+ENTRY(start)
+
+SECTIONS {
+    . = 1M;
+
+    .boot :
+    {
+        /* ensure that the multiboot header is at the beginning */
+        *(.multiboot_header)
+    }
+
+    .text :
+    {
+        *(.text)
+    }
+}
+
+```
+So let's create the ELF object files and link them using our new linker script:
+
+```
+> nasm -f elf64 multiboot_header.asm
+> nasm -f elf64 boot.asm
+> ld -n -o kernel.bin -T linker.ld multiboot_header.o boot.o
+```
+We can use objdump to print the sections of the generated executable and verify that the .boot section has a low file offset:
+
+```
+> objdump -h kernel.bin
+kernel.bin:     file format elf64-x86-64
+
+Sections:
+Idx Name      Size      VMA               LMA               File off  Algn
+  0 .boot     00000018  0000000000100000  0000000000100000  00000080  2**0
+              CONTENTS, ALLOC, LOAD, READONLY, DATA
+  1 .text     0000000b  0000000000100020  0000000000100020  000000a0  2**4
+              CONTENTS, ALLOC, LOAD, READONLY, CODE
+```
+## Creating the ISO
+
+Here I differ form original blog post and use an USB-Stick as device insted of an CD-ROM!
+
+
+
+
+
